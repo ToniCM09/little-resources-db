@@ -24,6 +24,8 @@ Métodos de búsqueda y ordenación utilizados durante el curso para la carga de
 #include <stdlib.h>
 #include <string.h>
 
+#define FILENAME "resources.txt"
+
 
 typedef struct {
     int id;
@@ -35,7 +37,7 @@ typedef struct {
 
 void addResource(resource *input, FILE *output);
 void searchResource(char *name, FILE *f);
-void saveAndExitProgram(FILE *f);
+int saveAndExitProgram(FILE *f);
 char* sAlloc(char *scannedString);
 
 int main(int argc, char *argv[]) {
@@ -43,10 +45,11 @@ int main(int argc, char *argv[]) {
     int optionMenu = 0;
     FILE *database;
 
+
     while (optionMenu != 3) {
 
     
-        printf("---- MENU ----\n");
+        printf("\n---- MENU ----\n");
         printf("¿Que quieres hacer?\n");
         printf("1. A%cadir un recurso a la base de datos.\n", (char)164);
         printf("2. Buscar un recurso.\n");
@@ -94,7 +97,8 @@ int main(int argc, char *argv[]) {
 }
 
 void addResource(resource *input, FILE *output) {
-    output = fopen("resources.txt", "a");
+    output = fopen(FILENAME, "a");
+    //todo error al abrir el fichero
     fprintf(output, "\n");
     fprintf(output, "Id: %d\n", input->id);
     fprintf(output, "Nombre: %s", input->name);
@@ -103,15 +107,18 @@ void addResource(resource *input, FILE *output) {
     fprintf(output, "Enlace: %s", input->link);
 
 
-    printf("Nuevo recurso anyadido correctamente.");
+    printf("\nNuevo recurso anyadido correctamente.\n");
 }
 
 void searchResource(char *name, FILE *f) {
 
 }
 
-void saveAndExitProgram(FILE *f) {
+int saveAndExitProgram(FILE *f) {
+    fclose(f);
+    printf("Base de datos guardada correctamente.\n");
 
+    return 0;
 }
 
 char* sAlloc(char *scannedString) {
