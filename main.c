@@ -47,10 +47,12 @@ int main(int argc, char *argv[]) {
     int idLine = 5;
     FILE *database;
 
+    database = fopen(FILENAME, "r+");
+    fscanf(database, "%d", &id);
 
     while (optionMenu != 3) {
-
-    
+        
+        printf("%d", id);
         printf("\n---- MENU ----\n");
         printf("¿Que quieres hacer?\n");
         printf("1. A%cadir un recurso a la base de datos.\n", (char)164);
@@ -73,17 +75,17 @@ int main(int argc, char *argv[]) {
             printf("Introduce el nombre del nuevo recurso:\n");
             getchar();
             newResource->name = sAlloc(newResource->name);
-            getchar();
             printf("Introduce la categoria del recurso:\n");
             newResource->category= sAlloc(newResource->category);
-            getchar();
             printf("Introduce una peque%ca descripcion del recurso (Maximo 200 caracteres):\n", (char)164);
             newResource->description = sAlloc(newResource->description);
-            getchar();
             printf("Introduce el enlace al recurso:\n");
             newResource->link = sAlloc(newResource->link);
 
             addResource(newResource, database);
+
+            fseek(database, 0, SEEK_SET);
+            fprintf(database, "%d", (newResource->id + 1));
 
         }
             
@@ -107,6 +109,8 @@ void addResource(resource *input, FILE *output) {
     fprintf(output, "Categoria: %s", input->category);
     fprintf(output, "Descripcion: %s", input->description);
     fprintf(output, "Enlace: %s", input->link);
+
+
     fclose(output);
 
     printf("\nNuevo recurso anyadido correctamente.\n");
