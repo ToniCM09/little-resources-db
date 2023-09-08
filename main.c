@@ -43,63 +43,65 @@ int main(int argc, char *argv[]) {
     int optionMenu = 0;
     FILE *database;
 
+    while (optionMenu != 3) {
 
-    printf("---- MENU ----\n");
-    printf("¿Que quieres hacer?\n");
-    printf("1. A%cadir un recurso a la base de datos.\n", (char)164);
-    printf("2. Buscar un recurso.\n");
-    printf("3. Guardar el programa y salir.\n");
-    scanf("%d", &optionMenu);
-
-    while (optionMenu < 0 || optionMenu > 3)
-    {
-        printf("Lo siento. No es una opci%cn v%clida, vuelve a intentarlo:\n", (char) 162, (char)160);
-        scanf("%d", &optionMenu);
-    }
     
-    if (optionMenu == 1) {
-        resource *newResource;
-        newResource = (resource *) malloc(sizeof(resource));
+        printf("---- MENU ----\n");
+        printf("¿Que quieres hacer?\n");
+        printf("1. A%cadir un recurso a la base de datos.\n", (char)164);
+        printf("2. Buscar un recurso.\n");
+        printf("3. Guardar el programa y salir.\n");
+        scanf("%d", &optionMenu);
 
-        newResource->id = id++;
-
-        printf("Introduce el nombre del nuevo recurso:\n");
-        getchar();
-        newResource->name = sAlloc(newResource->name);
-
-        printf("Introduce la categoria del recurso:\n");
-        newResource->category= sAlloc(newResource->category);
-
-        printf("Introduce una pequeña descripcion del recurso (Maximo 200 caracteres):\n");
-        newResource->description = sAlloc(newResource->description);
-
-        printf("Introduce el enlace al recurso:\n");
-        newResource->link = sAlloc(newResource->link);
-
-        addResource(newResource, database);
-
-    }
+        while (optionMenu < 0 || optionMenu > 3)
+        {
+            printf("Lo siento. No es una opci%cn v%clida, vuelve a intentarlo:\n", (char) 162, (char)160);
+            scanf("%d", &optionMenu);
+        }
         
-    else if (optionMenu == 2) {
-        char *resourceName;
+        if (optionMenu == 1) {
+            resource *newResource;
+            newResource = (resource *) malloc(sizeof(resource));
 
-        searchResource(resourceName, database);
+            newResource->id = id++;
+
+            printf("Introduce el nombre del nuevo recurso:\n");
+            getchar();
+            newResource->name = sAlloc(newResource->name);
+
+            printf("Introduce la categoria del recurso:\n");
+            newResource->category= sAlloc(newResource->category);
+
+            printf("Introduce una pequeña descripcion del recurso (Maximo 200 caracteres):\n");
+            newResource->description = sAlloc(newResource->description);
+
+            printf("Introduce el enlace al recurso:\n");
+            newResource->link = sAlloc(newResource->link);
+
+            addResource(newResource, database);
+
+        }
+            
+        else if (optionMenu == 2) {
+            char *resourceName;
+
+            searchResource(resourceName, database);
+        } 
     } 
-        
-    else   
-        saveAndExitProgram(database);
-
-
+    saveAndExitProgram(database);
 
     return 0;
 }
 
 void addResource(resource *input, FILE *output) {
-    printf("%d", input->id);
-    printf("%s", input->name);
-    printf("%s", input->category);
-    printf("%s", input->description);
-    printf("%s", input->link);
+    output = fopen("resources.txt", "a");
+    fprintf(output, "\n");
+    fprintf(output, "Id: %d\n", input->id);
+    fprintf(output, "Nombre: %s", input->name);
+    fprintf(output, "Categoria: %s", input->category);
+    fprintf(output, "Descripcion: %s", input->description);
+    fprintf(output, "Enlace: %s", input->link);
+
 
     printf("Nuevo recurso anyadido correctamente.");
 }
