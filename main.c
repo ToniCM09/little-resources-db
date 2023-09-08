@@ -39,10 +39,12 @@ void addResource(resource *input, FILE *output);
 void searchResource(char *name, FILE *f);
 int saveAndExitProgram(FILE *f);
 char* sAlloc(char *scannedString);
+void printResource(FILE *stream, int idLine);
 
 int main(int argc, char *argv[]) {
     int id = 0;
     int optionMenu = 0;
+    int idLine = 5;
     FILE *database;
 
 
@@ -71,13 +73,13 @@ int main(int argc, char *argv[]) {
             printf("Introduce el nombre del nuevo recurso:\n");
             getchar();
             newResource->name = sAlloc(newResource->name);
-
+            getchar();
             printf("Introduce la categoria del recurso:\n");
             newResource->category= sAlloc(newResource->category);
-
-            printf("Introduce una pequeña descripcion del recurso (Maximo 200 caracteres):\n");
+            getchar();
+            printf("Introduce una peque%ca descripcion del recurso (Maximo 200 caracteres):\n", (char)164);
             newResource->description = sAlloc(newResource->description);
-
+            getchar();
             printf("Introduce el enlace al recurso:\n");
             newResource->link = sAlloc(newResource->link);
 
@@ -87,8 +89,8 @@ int main(int argc, char *argv[]) {
             
         else if (optionMenu == 2) {
             char *resourceName;
-
             searchResource(resourceName, database);
+            printResource(database, idLine);
         } 
     } 
     saveAndExitProgram(database);
@@ -105,7 +107,7 @@ void addResource(resource *input, FILE *output) {
     fprintf(output, "Categoria: %s", input->category);
     fprintf(output, "Descripcion: %s", input->description);
     fprintf(output, "Enlace: %s", input->link);
-
+    fclose(output);
 
     printf("\nNuevo recurso anyadido correctamente.\n");
 }
@@ -114,8 +116,8 @@ void searchResource(char *name, FILE *f) {
 
 }
 
-int saveAndExitProgram(FILE *f) {
-    fclose(f);
+int saveAndExitProgram(FILE *stream) {
+    fclose(stream);
     printf("Base de datos guardada correctamente.\n");
 
     return 0;
@@ -127,4 +129,26 @@ char* sAlloc(char *scannedString) {
     scannedString = strdup(temp);
 
     return scannedString;
+}
+
+void printResource(FILE *stream, int idLine) {
+    char c;
+
+    stream = fopen("resources.txt", "r");
+    fseek(stream, idLine + 1, SEEK_SET);
+    printf("%ld", ftell(stream));
+
+    for (int i = 0; i < 4; i++) {
+        c = fgetc(stream);
+        while (c != '\n') {
+            printf("%c", c);
+            c = fgetc(stream);
+        }
+        printf("\n");
+    }
+    
+   
+   /* printf("Categoria: %s\n", fgets(idLine + 2, maxLenght, stream));
+    printf("Descripcion: %s\n", fgets(idLine + 3, maxLenght, stream));
+    printf("Enlace: %s\n", fgets(idLine + 4, maxLenght, stream));*/
 }
