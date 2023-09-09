@@ -1,9 +1,10 @@
 #include "libdb.h"
-
+// Añadir un nuevo recurso al archivo
 void addResource(resource *input, FILE *output) {
-    output = fopen(FILENAME, "a");
+    output = fopen(FILENAME, "a"); //Abrimos el archivo en modo 'append' para no sobreescribir el contenido
     checkFileErrors(output);
     fprintf(output, "\n");
+    // Escribimos en el archivo cada uno de los elementos
     fprintf(output, "Nombre: %s", input->name);
     fprintf(output, "Categoria: %s", input->category);
     fprintf(output, "Descripcion: %s", input->description);
@@ -11,20 +12,22 @@ void addResource(resource *input, FILE *output) {
 
     fclose(output);
 
-    printf("\nNuevo recurso anyadido correctamente.\n");
+    printf("\nNuevo recurso a%cadido correctamente.\n", (char)164);
 }
-
+// Busqueda de recursos dentro del fichero e impresión del nombre de cada uno de ellos
 int listResources(FILE *f) {
-    char stringToFind[50];
-    int resourcePos[20];
-    int counter = -1;
-    int resourceSelected = -1;
+    char stringToFind[50]; //Palabra que irá recogiendo la búsqueda
+    int *resourcePos = NULL; // Numero del recurso dentro del fichero
+    int counter = -1; // Numero de recurso
+    int resourceSelected = -1; // Recurso elegido por el usuario
     printf("--------\n");
     printf("Listado de recursos almacenados. Escribe el numero del recurso para ver el contenido completo:\n");
-    while (fscanf(f, "%s", stringToFind) > 0) {
+    while (fscanf(f, "%s", stringToFind) > 0) {  //Bucle que va almacenando cada palabra del fichero
         if (strcmp(stringToFind, "Nombre:") == 0) {
-            resourcePos[++counter] = ftell(f);
-            fgets(stringToFind, 100, f);
+            counter++;
+            resourcePos = realloc(resourcePos, (counter + 1) * sizeof(int)); // Asignación de memoria dinámica según el número de recursos que haya
+            resourcePos[counter] = ftell(f); // Asignamos la posición del puntero del fichero a el recurso correspondiente
+            fgets(stringToFind, 100, f); // Recuperamos la línea entera del nombre
             printf("%d -%s", counter, stringToFind);
         }
     }
@@ -35,15 +38,15 @@ int listResources(FILE *f) {
     printf("--------\n");
     return resourcePos[resourceSelected];
 }
-
+// Imprimimos el recurso seleccionado por el usuario
 void printResource(FILE *stream, int idLine) {
     char c;
-    int numRows = 4;
-    int bytesUntilName = 7;
+    int numFields = 4; // Número de elementos del recurso
+    int bytesUntilName = 7; // Posiciones que debemos retroceder en el puntero del fichero para llegar a la posición deseada. Es un número fijo ya que siempre buscamos -> Nombre:
 
-    fseek(stream, idLine - bytesUntilName, SEEK_SET);
+    fseek(stream, idLine - bytesUntilName, SEEK_SET); //Establecemos la posición del puntero en el fichero
 
-    for (int i = 0; i < numRows; i++) {
+    for (int i = 0; i < numFields; i++) { // Imprimimos caracter a caracter
         c = fgetc(stream);
         while (c != '\n') {
             printf("%c", c);
@@ -61,25 +64,25 @@ int saveAndExitProgram(FILE *stream) {
 
     return 0;
 }
-
+// Comprobamos si hay algún problema con el fichero y, si lo hay, salimos del programa
 void checkFileErrors(FILE *f) {
     if (f == NULL) {
-        printf("Ha ocurrido un error, revisa el archivo error.log");
-        freopen("error.log", "w", stderr);
+        printf("Ha ocurrido un error, revisa el archivo error.log\n");
+        freopen("error.log", "w", stderr); // los errores se envian al archivo error.log
         fprintf(stderr, "No se puede abrir el fichero %s", FILENAME);
         fclose(stderr);
-        exit(-1);
+        exit(-1); // Salimos del programa 
     }
 }
-
+// Reservamos memoria para los elementos *char del recurso
 char* sAlloc(char *scannedString) {
-    int maxLenght = 201;
+    int maxLenght = 201; // Longitud máxima aceptada
     char temp[maxLenght];
-    if (fgets(temp, maxLenght, stdin) == NULL) {
-        printf("Error, el texto es demasiado largo.");
-        return "Error";
+    if (fgets(temp, maxLenght, stdin) == NULL) { // Comprobamos si el texto es demasiado largo y, si no lo es, lo asignamos a la variable temp
+        printf("Error, el texto es demasiado largo.\n");
+        return "Error"; // Se guardará la palabra error en el fichero
     };
-    scannedString = strdup(temp);
+    scannedString = strdup(temp); // Reservamos memoria 
 
     return scannedString;
 }

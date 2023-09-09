@@ -20,13 +20,13 @@ int main(int argc, char *argv[]) {
     while (optionMenu != 3) { //Bucle para mantener el programa en ejecución hasta que se indique su cierre
         
         printf("\n---- MENU ----\n");
-        printf("¿Que quieres hacer?\n");
+        printf("%cQue quieres hacer?\n", (char)168);
         printf("1. A%cadir un recurso a la base de datos.\n", (char)164);
         printf("2. Buscar un recurso.\n");
         printf("3. Guardar el programa y salir.\n");
         scanf("%d", &optionMenu);
 
-        while (optionMenu < 0 || optionMenu > 3) // Comprobación de datos de entrada
+        while (optionMenu < 1 || optionMenu > 3) // Comprobación de datos de entrada
         {
             printf("Lo siento. No es una opci%cn v%clida, vuelve a intentarlo:\n", (char) 162, (char)160);
             scanf("%d", &optionMenu);

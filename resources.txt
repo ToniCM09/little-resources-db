@@ -1,10 +1,10 @@
 
 Nombre: The Witcher
 Categoria: Series
-Descripcion: Serie completa de The Witcher. Las tres temporadas
+Descripcion: Serie completa de The Witcher
 Enlace: https://youtube.com/TheWitcher
 
 Nombre: Dune
-Categoria: Peliculas
-Descripcion: Pelicula completa de Dune (2021)
-Enlace: https://movies.com/dune
+Categoria: Pelicula
+Descripcion: Dune pelicula
+Enlace: https://pelicula
