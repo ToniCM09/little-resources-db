@@ -28,7 +28,6 @@ Métodos de búsqueda y ordenación utilizados durante el curso para la carga de
 
 
 typedef struct {
-    int id;
     char *name;
     char *category;
     char *description;
@@ -42,13 +41,8 @@ char* sAlloc(char *scannedString);
 void printResource(FILE *stream, int idLine);
 
 int main(int argc, char *argv[]) {
-    int id = 0;
     int optionMenu = 0;
-    int idLine = 5;
     FILE *database;
-
-    database = fopen(FILENAME, "r+");
-    fscanf(database, "%d", &id);
 
     while (optionMenu != 3) {
         
@@ -69,8 +63,6 @@ int main(int argc, char *argv[]) {
             resource *newResource;
             newResource = (resource *) malloc(sizeof(resource));
 
-            newResource->id = id++;
-
             printf("Introduce el nombre del nuevo recurso:\n");
             getchar();
             newResource->name = sAlloc(newResource->name);
@@ -82,16 +74,11 @@ int main(int argc, char *argv[]) {
             newResource->link = sAlloc(newResource->link);
 
             addResource(newResource, database);
-
-            fseek(database, 0, SEEK_SET);
-            fprintf(database, "%d", (newResource->id + 1));
-
         }
             
         else if (optionMenu == 2) {
-            char *resourceName;
-            listResources(database);
-            //printResource(database, idLine);
+            int idLine = listResources(database); 
+            printResource(database, idLine);
         } 
     } 
     saveAndExitProgram(database);
@@ -103,7 +90,6 @@ void addResource(resource *input, FILE *output) {
     output = fopen(FILENAME, "a");
     //todo error al abrir el fichero
     fprintf(output, "\n");
-    fprintf(output, "Id: %d\n", input->id);
     fprintf(output, "Nombre: %s", input->name);
     fprintf(output, "Categoria: %s", input->category);
     fprintf(output, "Descripcion: %s", input->description);
@@ -116,15 +102,18 @@ void addResource(resource *input, FILE *output) {
 }
 
 int listResources(FILE *f) {
+    rewind(f);
     char stringToFind[50];
+    int resourcePos[20];
     int counter = -1;
     int resourceSelected = -1;
     printf("--------\n");
     printf("Listado de recursos almacenados. Escribe el numero del recurso para ver el contenido completo:\n");
     while (fscanf(f, "%s", stringToFind) > 0) {
         if (strcmp(stringToFind, "Nombre:") == 0) {
+            resourcePos[++counter] = ftell(f);
             fgets(stringToFind, 100, f);
-            printf("%d -%s", ++counter, stringToFind);
+            printf("%d -%s", counter, stringToFind);
         }
     }
     if (counter == -1)
@@ -132,8 +121,7 @@ int listResources(FILE *f) {
     else 
         scanf("%d", &resourceSelected);
     printf("--------\n");
-
-    return resourceSelected;
+    return resourcePos[resourceSelected];
 }
 
 int saveAndExitProgram(FILE *stream) {
@@ -155,8 +143,7 @@ void printResource(FILE *stream, int idLine) {
     char c;
 
     stream = fopen(FILENAME, "r");
-    fseek(stream, idLine + 1, SEEK_SET);
-    printf("%ld", ftell(stream));
+    fseek(stream, idLine - 7, SEEK_SET);
 
     for (int i = 0; i < 4; i++) {
         c = fgetc(stream);
@@ -167,5 +154,4 @@ void printResource(FILE *stream, int idLine) {
         printf("\n");
     }
     
-
 }
