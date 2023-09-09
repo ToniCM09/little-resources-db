@@ -36,7 +36,7 @@ typedef struct {
 } resource;
 
 void addResource(resource *input, FILE *output);
-void searchResource(char *name, FILE *f);
+int listResources(FILE *f);
 int saveAndExitProgram(FILE *f);
 char* sAlloc(char *scannedString);
 void printResource(FILE *stream, int idLine);
@@ -52,7 +52,6 @@ int main(int argc, char *argv[]) {
 
     while (optionMenu != 3) {
         
-        printf("%d", id);
         printf("\n---- MENU ----\n");
         printf("¿Que quieres hacer?\n");
         printf("1. A%cadir un recurso a la base de datos.\n", (char)164);
@@ -91,8 +90,8 @@ int main(int argc, char *argv[]) {
             
         else if (optionMenu == 2) {
             char *resourceName;
-            searchResource(resourceName, database);
-            printResource(database, idLine);
+            listResources(database);
+            //printResource(database, idLine);
         } 
     } 
     saveAndExitProgram(database);
@@ -116,8 +115,25 @@ void addResource(resource *input, FILE *output) {
     printf("\nNuevo recurso anyadido correctamente.\n");
 }
 
-void searchResource(char *name, FILE *f) {
+int listResources(FILE *f) {
+    char stringToFind[50];
+    int counter = -1;
+    int resourceSelected = -1;
+    printf("--------\n");
+    printf("Listado de recursos almacenados. Escribe el numero del recurso para ver el contenido completo:\n");
+    while (fscanf(f, "%s", stringToFind) > 0) {
+        if (strcmp(stringToFind, "Nombre:") == 0) {
+            fgets(stringToFind, 100, f);
+            printf("%d -%s", ++counter, stringToFind);
+        }
+    }
+    if (counter == -1)
+        printf("No se han encontrado recursos");
+    else 
+        scanf("%d", &resourceSelected);
+    printf("--------\n");
 
+    return resourceSelected;
 }
 
 int saveAndExitProgram(FILE *stream) {
@@ -138,7 +154,7 @@ char* sAlloc(char *scannedString) {
 void printResource(FILE *stream, int idLine) {
     char c;
 
-    stream = fopen("resources.txt", "r");
+    stream = fopen(FILENAME, "r");
     fseek(stream, idLine + 1, SEEK_SET);
     printf("%ld", ftell(stream));
 
@@ -151,8 +167,5 @@ void printResource(FILE *stream, int idLine) {
         printf("\n");
     }
     
-   
-   /* printf("Categoria: %s\n", fgets(idLine + 2, maxLenght, stream));
-    printf("Descripcion: %s\n", fgets(idLine + 3, maxLenght, stream));
-    printf("Enlace: %s\n", fgets(idLine + 4, maxLenght, stream));*/
+
 }
