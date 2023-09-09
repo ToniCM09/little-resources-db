@@ -1,30 +1,10 @@
-4
-Id: 0
+
 Nombre: The Witcher
 Categoria: Series
 Descripcion: Serie completa de The Witcher. Las tres temporadas
 Enlace: https://youtube.com/TheWitcher
 
-Id: 1
 Nombre: Dune
 Categoria: Peliculas
 Descripcion: Pelicula completa de Dune (2021)
 Enlace: https://movies.com/dune
-
-Id: 2
-Nombre: Cyberpunk 2077
-Categoria: Videojuegos
-Descripcion: Wiki del videojuego Cyberpunk 2077
-Enlace: https://wiki.cyberpunk2077
-
-Id: 3
-Nombre: Arguinano
-Categoria: Cocina
-Descripcion: Libro de recetas de Arguinano
-Enlace: https://cocina_con_arguinano
-
-Id: 3
-Nombre: prueba
-Categoria: probando
-Descripcion: probadura
-Enlace: probatura

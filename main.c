@@ -1,50 +1,23 @@
 /*
-Mini base de datos
-1 - Definir la estructura que queremos almacenar (Nombre, categoria, descripcion, enlace (por ejemplo))
-2 - Trabajar con ficheros para que no se pierda la información
-    Cargamos la información (Métodos de búsqueda y ordenación)
-    Guardamos la información
-3 - Creación de un menú de trabajo
-    Insertar nueva referencia
-    Buscar una referencia
-    Guardar, actualizar fichero y salir del programa
-    
+Programa que simula una pequeña base de datos en la que podemos almacenar recursos con la siguiente estructura:
+    - Nombre
+    - Categoría
+    - Descricpción
+    - Enlace
 
-Consejos:
-Guardado de información(Podemos utilizar un buffer lineal o un arbol)
-Guardar todas las estructuras en un fichero de texto
-    (Podemos inventarnos una extensión, no tiene por qué ser txt)
-    Leer referencias almacenadas y actualizarlas antes de salir del programa
-Métodos de búsqueda y ordenación utilizados durante el curso para la carga de estructura de referencias
+Los datos se almacenan en un fichero que podemos consultar para buscar un recurso concreto y que nos lo muestre por pantalla.
 
-
+El programa se gestiona desde un menú con las opciones de añadir un recurso, buscarlo o guardar el fichero y salir del programa.
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#define FILENAME "resources.txt"
-
-
-typedef struct {
-    char *name;
-    char *category;
-    char *description;
-    char *link;
-} resource;
-
-void addResource(resource *input, FILE *output);
-int listResources(FILE *f);
-int saveAndExitProgram(FILE *f);
-char* sAlloc(char *scannedString);
-void printResource(FILE *stream, int idLine);
+#include "libdb.h"
 
 int main(int argc, char *argv[]) {
+    // Definición de variables
     int optionMenu = 0;
     FILE *database;
-
-    while (optionMenu != 3) {
+    
+    while (optionMenu != 3) { //Bucle para mantener el programa en ejecución hasta que se indique su cierre
         
         printf("\n---- MENU ----\n");
         printf("¿Que quieres hacer?\n");
@@ -53,16 +26,16 @@ int main(int argc, char *argv[]) {
         printf("3. Guardar el programa y salir.\n");
         scanf("%d", &optionMenu);
 
-        while (optionMenu < 0 || optionMenu > 3)
+        while (optionMenu < 0 || optionMenu > 3) // Comprobación de datos de entrada
         {
             printf("Lo siento. No es una opci%cn v%clida, vuelve a intentarlo:\n", (char) 162, (char)160);
             scanf("%d", &optionMenu);
         }
         
         if (optionMenu == 1) {
+            // Declaración de estructura y asignación de memoria
             resource *newResource;
-            newResource = (resource *) malloc(sizeof(resource));
-
+            newResource = (resource *) malloc(sizeof(resource)); 
             printf("Introduce el nombre del nuevo recurso:\n");
             getchar();
             newResource->name = sAlloc(newResource->name);
@@ -72,86 +45,20 @@ int main(int argc, char *argv[]) {
             newResource->description = sAlloc(newResource->description);
             printf("Introduce el enlace al recurso:\n");
             newResource->link = sAlloc(newResource->link);
-
-            addResource(newResource, database);
+            
+            addResource(newResource, database); //Añadir el recurso al fichero
+            freeMemory(newResource); // Liberar la memoria
         }
             
         else if (optionMenu == 2) {
-            int idLine = listResources(database); 
-            printResource(database, idLine);
+            database = fopen(FILENAME, "r");
+            checkFileErrors(database); // Comprobación de errores
+            int idLine = listResources(database); // Lista los recursos almacenados y devuelve el recurso seleccionado
+            printResource(database, idLine); // Imprime por pantalla el recurso seleccionado
+            fclose(database);
         } 
     } 
-    saveAndExitProgram(database);
+    saveAndExitProgram(database); //Salir del programa
 
     return 0;
-}
-
-void addResource(resource *input, FILE *output) {
-    output = fopen(FILENAME, "a");
-    //todo error al abrir el fichero
-    fprintf(output, "\n");
-    fprintf(output, "Nombre: %s", input->name);
-    fprintf(output, "Categoria: %s", input->category);
-    fprintf(output, "Descripcion: %s", input->description);
-    fprintf(output, "Enlace: %s", input->link);
-
-
-    fclose(output);
-
-    printf("\nNuevo recurso anyadido correctamente.\n");
-}
-
-int listResources(FILE *f) {
-    rewind(f);
-    char stringToFind[50];
-    int resourcePos[20];
-    int counter = -1;
-    int resourceSelected = -1;
-    printf("--------\n");
-    printf("Listado de recursos almacenados. Escribe el numero del recurso para ver el contenido completo:\n");
-    while (fscanf(f, "%s", stringToFind) > 0) {
-        if (strcmp(stringToFind, "Nombre:") == 0) {
-            resourcePos[++counter] = ftell(f);
-            fgets(stringToFind, 100, f);
-            printf("%d -%s", counter, stringToFind);
-        }
-    }
-    if (counter == -1)
-        printf("No se han encontrado recursos");
-    else 
-        scanf("%d", &resourceSelected);
-    printf("--------\n");
-    return resourcePos[resourceSelected];
-}
-
-int saveAndExitProgram(FILE *stream) {
-    fclose(stream);
-    printf("Base de datos guardada correctamente.\n");
-
-    return 0;
-}
-
-char* sAlloc(char *scannedString) {
-    char temp[202];
-    fgets(temp, 202, stdin);
-    scannedString = strdup(temp);
-
-    return scannedString;
-}
-
-void printResource(FILE *stream, int idLine) {
-    char c;
-
-    stream = fopen(FILENAME, "r");
-    fseek(stream, idLine - 7, SEEK_SET);
-
-    for (int i = 0; i < 4; i++) {
-        c = fgetc(stream);
-        while (c != '\n') {
-            printf("%c", c);
-            c = fgetc(stream);
-        }
-        printf("\n");
-    }
-    
 }
